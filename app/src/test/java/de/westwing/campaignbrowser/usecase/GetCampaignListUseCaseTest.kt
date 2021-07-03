@@ -18,6 +18,7 @@ import org.junit.Test
 private const val NAME = "name"
 private const val DESCRIPTION = "description"
 private const val IMAGE_URL = "url"
+private const val EMPTY = ""
 
 class GetCampaignListUseCaseTest {
 
@@ -59,12 +60,12 @@ class GetCampaignListUseCaseTest {
             .observeOn(Schedulers.trampoline())
             .test()
 
-        val expectedCampagins = listOf(Campaign(name = NAME, description = DESCRIPTION, imageUrl = IMAGE_URL))
-        testSubscriber.assertValue(expectedCampagins)
+        val expectedCampaigns = listOf(Campaign(name = NAME, description = DESCRIPTION, imageUrl = IMAGE_URL))
+        testSubscriber.assertValue(expectedCampaigns)
     }
 
     @Test
-    fun `when all name and description are not null then map response 1`() {
+    fun `remove campaign if campaign name is null`() {
         every { campaignsResponse.metadata } returns metaData
         every { metaData.data } returns listOf(campaignDto)
         every { campaignDto.name } returns null
@@ -78,7 +79,60 @@ class GetCampaignListUseCaseTest {
             .observeOn(Schedulers.trampoline())
             .test()
 
-//        val expectedCampagins = listOf(Campaign(name = NAME, description = DESCRIPTION, imageUrl = IMAGE_URL))
+        testSubscriber.assertValue(emptyList())
+    }
+
+    @Test
+    fun `remove campaign if campaign name is empty`() {
+        every { campaignsResponse.metadata } returns metaData
+        every { metaData.data } returns listOf(campaignDto)
+        every { campaignDto.name } returns EMPTY
+        every { campaignDto.description } returns DESCRIPTION
+        every { campaignDto.image } returns imageDto
+        every { imageDto.url } returns IMAGE_URL
+        every { campaignRepository.getCampaigns() } returns Single.just(campaignsResponse)
+
+        val testSubscriber = getCampaignListUseCase.execute()
+            .subscribeOn(Schedulers.trampoline())
+            .observeOn(Schedulers.trampoline())
+            .test()
+
+        testSubscriber.assertValue(emptyList())
+    }
+
+    @Test
+    fun `remove campaign if description name is null`() {
+        every { campaignsResponse.metadata } returns metaData
+        every { metaData.data } returns listOf(campaignDto)
+        every { campaignDto.name } returns NAME
+        every { campaignDto.description } returns null
+        every { campaignDto.image } returns imageDto
+        every { imageDto.url } returns IMAGE_URL
+        every { campaignRepository.getCampaigns() } returns Single.just(campaignsResponse)
+
+        val testSubscriber = getCampaignListUseCase.execute()
+            .subscribeOn(Schedulers.trampoline())
+            .observeOn(Schedulers.trampoline())
+            .test()
+
+        testSubscriber.assertValue(emptyList())
+    }
+
+    @Test
+    fun `remove campaign if campaign description is empty`() {
+        every { campaignsResponse.metadata } returns metaData
+        every { metaData.data } returns listOf(campaignDto)
+        every { campaignDto.name } returns NAME
+        every { campaignDto.description } returns EMPTY
+        every { campaignDto.image } returns imageDto
+        every { imageDto.url } returns IMAGE_URL
+        every { campaignRepository.getCampaigns() } returns Single.just(campaignsResponse)
+
+        val testSubscriber = getCampaignListUseCase.execute()
+            .subscribeOn(Schedulers.trampoline())
+            .observeOn(Schedulers.trampoline())
+            .test()
+
         testSubscriber.assertValue(emptyList())
     }
 }
