@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="number_of_columns">1</integer>
+    <integer name="campaign_list_item_vertical_spacing">8</integer>
+    <integer name="campaign_list_item_horizontal_spacing">1</integer>
+</resources>
