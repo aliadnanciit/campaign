@@ -11,6 +11,7 @@ import de.westwing.campaignbrowser.service.ApiInterface
 import de.westwing.campaignbrowser.repository.CampaignRepositoryImpl
 import de.westwing.campaignbrowser.repository.CampaignRepository
 import de.westwing.campaignbrowser.CampaignApp
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Scheduler
 import io.reactivex.rxjava3.schedulers.Schedulers
 import okhttp3.OkHttpClient
@@ -80,5 +81,9 @@ abstract class AppModule {
         @Provides
         @Named("IO_SCHEDULER")
         fun provideIoScheduler(): Scheduler = Schedulers.io()
+
+        @Provides
+        @Named("MAIN_SCHEDULER")
+        fun provideMainScheduler(): Scheduler = AndroidSchedulers.mainThread()
     }
 }

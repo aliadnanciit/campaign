@@ -1,4 +1,4 @@
-package de.westwing.campaignbrowser.presentation.list
+package de.westwing.campaignbrowser.view.list
 
 import de.westwing.campaignbrowser.model.Campaign
 

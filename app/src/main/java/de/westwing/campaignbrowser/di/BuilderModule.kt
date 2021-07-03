@@ -2,7 +2,7 @@ package de.westwing.campaignbrowser.di
 
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
-import de.westwing.campaignbrowser.presentation.list.CampaignListActivity
+import de.westwing.campaignbrowser.view.list.CampaignListActivity
 
 @Module
 abstract class BuilderModule {

@@ -1,6 +1,4 @@
-package de.westwing.campaignbrowser.model
-
-import de.westwing.campaignbrowser.model.ImageDto
+package de.westwing.campaignbrowser.model.server
 
 class CampaignDto(
     val name: String?,

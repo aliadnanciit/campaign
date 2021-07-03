@@ -1,4 +1,4 @@
-package de.westwing.campaignbrowser.presentation.list
+package de.westwing.campaignbrowser.view.list
 
 import android.content.Intent
 import android.os.Bundle
@@ -13,8 +13,8 @@ import de.westwing.campaignbrowser.common.ItemVerticalSpaceDecoration
 import de.westwing.campaignbrowser.databinding.ActivityCampaignListBinding
 import de.westwing.campaignbrowser.di.ViewModelFactory
 import de.westwing.campaignbrowser.model.Campaign
-import de.westwing.campaignbrowser.model.CampaignStates
-import de.westwing.campaignbrowser.presentation.detail.CampaignDetailActivity
+import de.westwing.campaignbrowser.model.server.CampaignStates
+import de.westwing.campaignbrowser.view.detail.CampaignDetailActivity
 import de.westwing.campaignbrowser.viewmodel.CampaignViewModel
 import javax.inject.Inject
 
@@ -67,9 +67,11 @@ class CampaignListActivity : AppCompatActivity(), CampaignClickListener {
                 binding.loadingIndicator.visibility = View.VISIBLE
             }
             is CampaignStates.Success -> {
+                binding.loadingIndicator.visibility = View.GONE
+                binding.errorContainer.visibility = View.GONE
                 showDate(campaignState.list)
             }
-            else -> {
+            is CampaignStates.Error -> {
                 showError()
             }
         }
@@ -80,11 +82,8 @@ class CampaignListActivity : AppCompatActivity(), CampaignClickListener {
     }
 
     private fun showDate(list: List<Campaign>) {
-        binding.loadingIndicator.visibility = View.GONE
-        binding.errorContainer.visibility = View.GONE
-
-        adapter.submitList(list)
         binding.campaignsRecycler.visibility = View.VISIBLE
+        adapter.submitList(list)
     }
 
     private fun showError() {

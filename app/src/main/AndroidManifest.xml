@@ -12,7 +12,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.CampaignBrowser">
-        <activity android:name=".presentation.list.CampaignListActivity">
+        <activity android:name=".view.list.CampaignListActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -20,7 +20,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".presentation.detail.CampaignDetailActivity"/>
+        <activity android:name=".view.detail.CampaignDetailActivity"/>
     </application>
 
 </manifest>

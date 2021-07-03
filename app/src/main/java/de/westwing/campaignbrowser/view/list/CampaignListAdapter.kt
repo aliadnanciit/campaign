@@ -1,4 +1,4 @@
-package de.westwing.campaignbrowser.presentation.list
+package de.westwing.campaignbrowser.view.list
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -9,7 +9,9 @@ import com.bumptech.glide.Glide
 import de.westwing.campaignbrowser.databinding.ItemCampaignBinding
 import de.westwing.campaignbrowser.model.Campaign
 
-class CampaignListAdapter(private val campaignClickListener: CampaignClickListener): ListAdapter<Campaign, CampaignViewHolder>(campaignDiff) {
+class CampaignListAdapter(
+    private val campaignClickListener: CampaignClickListener
+): ListAdapter<Campaign, CampaignViewHolder>(campaignDiff) {
 
     companion object {
         val campaignDiff = object: DiffUtil.ItemCallback<Campaign>() {

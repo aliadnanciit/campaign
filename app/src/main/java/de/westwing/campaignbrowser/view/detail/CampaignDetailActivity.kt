@@ -1,4 +1,4 @@
-package de.westwing.campaignbrowser.presentation.detail
+package de.westwing.campaignbrowser.view.detail
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
