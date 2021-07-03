@@ -2,8 +2,9 @@
 
 Android App using custom API
 
-<img src="https://github.com/aliadnanciit/campaign/blob/main/screenshots/campaign_listing_screenshot.png" width="200" height="400">
-<img src="https://github.com/aliadnanciit/campaign/blob/main/screenshots/campaign_detail_screenshot.png" width="200" height="400">
+| Campaign Listing | Detail Campaign Screen |
+| ------------- | ------------- |
+| <img src="https://github.com/aliadnanciit/campaign/blob/main/screenshots/campaign_listing_screenshot.png" width="200" height="400">  | <img src="https://github.com/aliadnanciit/campaign/blob/main/screenshots/campaign_detail_screenshot.png" width="200" height="400">  |
 
 ## Description
 
