@@ -1,6 +1,5 @@
 package de.westwing.campaignbrowser.view.list
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
@@ -93,7 +92,6 @@ class CampaignListActivity : AppCompatActivity(), CampaignClickListener {
     }
 
     override fun onclick(campaign: Campaign) {
-        val intent = Intent(this, CampaignDetailActivity::class.java)
-        startActivity(intent)
+        CampaignDetailActivity.startDetailActivity(this, campaign)
     }
 }

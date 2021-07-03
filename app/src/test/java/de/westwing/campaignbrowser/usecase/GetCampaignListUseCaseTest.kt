@@ -9,10 +9,8 @@ import de.westwing.campaignbrowser.repository.CampaignRepository
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
-import io.reactivex.rxjava3.core.Scheduler
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.Schedulers
-import org.junit.Assert.*
 
 import org.junit.Before
 import org.junit.Test
