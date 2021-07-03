@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">CampaignBrowser</string>
     <string name="base_url">https://static.westwing.de/</string>
+    <string name="error_internet_connection">There was an error. Please check your internet connection and try again.</string>
+    <string name="text_retry">Retry</string>
+    <string name="campaign_name_text">Campaign Name</string>
+    <string name="campaign_description_text">Campaign Description</string>
 </resources>
