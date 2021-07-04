@@ -1,29 +1,33 @@
-package de.westwing.campaignbrowser
+package de.westwing.campaignbrowser.viewmodel
 
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import de.westwing.campaignbrowser.model.Campaign
+import de.westwing.campaignbrowser.model.server.CampaignStates
 import de.westwing.campaignbrowser.usecase.GetCampaignListUseCase
-import de.westwing.campaignbrowser.viewmodel.CampaignViewModel
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
-import io.reactivex.rxjava3.core.Scheduler
 import io.reactivex.rxjava3.core.Single
 import io.reactivex.rxjava3.schedulers.Schedulers
+import org.junit.Assert.assertEquals
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 
 class CampaignViewModelTest {
 
+    @get:Rule
+    val instantTaskExecutor = InstantTaskExecutorRule()
+
     @MockK
     private lateinit var campaign: Campaign
-
     private lateinit var viewModel: CampaignViewModel
 
     @MockK
     private lateinit var getCampaignListUseCase: GetCampaignListUseCase
 
     @Before
-    fun setup() {
+    fun setUp() {
         MockKAnnotations.init(this)
         viewModel = CampaignViewModel(
             getCampaignListUseCase,
@@ -33,11 +37,11 @@ class CampaignViewModelTest {
     }
 
     @Test
-    fun `Test CampaignViewModel here`() {
+    fun `should show success state`() {
         every { getCampaignListUseCase.execute() } returns Single.just(listOf(campaign))
 
         viewModel.getCampaigns()
 
-        val test = viewModel.campaignsData.observeForever {  }
+        assertEquals(CampaignStates.Success(listOf(campaign)), viewModel.campaignsData.value)
     }
 }

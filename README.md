@@ -34,4 +34,4 @@ A simple app that have following basic functionality.
 
 ## Unit testing
 
-Only useCase and Repository are tested.
+Added unit tests for view model, useCase and repository.

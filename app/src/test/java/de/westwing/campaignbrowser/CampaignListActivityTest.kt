@@ -7,7 +7,6 @@ import androidx.test.ext.junit.rules.activityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import de.westwing.campaignbrowser.model.Campaign
 import de.westwing.campaignbrowser.view.list.CampaignListActivity
-import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
