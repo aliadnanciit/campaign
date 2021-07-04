@@ -4,6 +4,9 @@ import android.os.Bundle
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import dagger.hilt.android.AndroidEntryPoint
 import de.westwing.campaignbrowser.R
 import de.westwing.campaignbrowser.common.DensityConverter
@@ -14,6 +17,8 @@ import de.westwing.campaignbrowser.model.Campaign
 import de.westwing.campaignbrowser.model.server.CampaignStates
 import de.westwing.campaignbrowser.view.detail.CampaignDetailActivity
 import de.westwing.campaignbrowser.viewmodel.CampaignViewModel
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class CampaignListActivity : AppCompatActivity(), CampaignClickListener {
@@ -49,9 +54,13 @@ class CampaignListActivity : AppCompatActivity(), CampaignClickListener {
         )
 
 
-        viewModel.campaignsLiveData.observe(this, {
-                campaigns -> processViewState(campaigns)
-        })
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.campaignsLiveData.collect { campaigns ->
+                    processViewState(campaigns)
+                }
+            }
+        }
         loadCampaignsData()
     }
 

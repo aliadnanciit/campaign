@@ -1,12 +1,12 @@
 package de.westwing.campaignbrowser.viewmodel
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import de.westwing.campaignbrowser.model.server.CampaignStates
 import de.westwing.campaignbrowser.usecase.GetCampaignListUseCase
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -15,8 +15,8 @@ class CampaignViewModel @Inject constructor(
     private val getCampaignListUseCase: GetCampaignListUseCase
 ) : ViewModel() {
 
-    private val _campaignLiveData = MutableLiveData<CampaignStates>()
-    val campaignsLiveData : LiveData<CampaignStates> = _campaignLiveData
+    private val _campaignLiveData = MutableStateFlow<CampaignStates>(CampaignStates.Loading)
+    val campaignsLiveData : StateFlow<CampaignStates> = _campaignLiveData
 
     fun getCampaigns() {
         _campaignLiveData.value = CampaignStates.Loading
