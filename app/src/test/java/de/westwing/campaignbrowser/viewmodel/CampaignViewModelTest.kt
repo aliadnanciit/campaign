@@ -7,7 +7,7 @@ import de.westwing.campaignbrowser.usecase.GetCampaignListUseCase
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.impl.annotations.MockK
-import org.junit.Assert.assertEquals
+import org.junit.Assert
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -38,6 +38,22 @@ class CampaignViewModelTest {
 
         viewModel.getCampaigns()
 
-        assertEquals(CampaignStates.Success(listOf(campaign)), viewModel.campaignsLiveData.value)
+        Assert.assertEquals(
+            CampaignStates.Success(listOf(campaign)),
+            viewModel.campaignsLiveData.value
+        )
+    }
+
+    @Test
+    fun `should show error state`() {
+        val throwable: Throwable = RuntimeException()
+        coEvery { getCampaignListUseCase.execute() } throws throwable
+
+        viewModel.getCampaigns()
+
+        Assert.assertEquals(
+            CampaignStates.Error(throwable),
+            viewModel.campaignsLiveData.value
+        )
     }
 }
