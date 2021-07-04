@@ -5,10 +5,8 @@ import de.westwing.campaignbrowser.model.Campaign
 import de.westwing.campaignbrowser.model.server.CampaignStates
 import de.westwing.campaignbrowser.usecase.GetCampaignListUseCase
 import io.mockk.MockKAnnotations
-import io.mockk.every
+import io.mockk.coEvery
 import io.mockk.impl.annotations.MockK
-import io.reactivex.rxjava3.core.Single
-import io.reactivex.rxjava3.schedulers.Schedulers
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
@@ -30,18 +28,16 @@ class CampaignViewModelTest {
     fun setUp() {
         MockKAnnotations.init(this)
         viewModel = CampaignViewModel(
-            getCampaignListUseCase,
-            Schedulers.trampoline(),
-            Schedulers.trampoline()
+            getCampaignListUseCase
         )
     }
 
     @Test
     fun `should show success state`() {
-        every { getCampaignListUseCase.execute() } returns Single.just(listOf(campaign))
+        coEvery { getCampaignListUseCase.execute() } returns listOf(campaign)
 
         viewModel.getCampaigns()
 
-        assertEquals(CampaignStates.Success(listOf(campaign)), viewModel.campaignsData.value)
+        assertEquals(CampaignStates.Success(listOf(campaign)), viewModel.campaignsLiveData.value)
     }
 }

@@ -1,46 +1,32 @@
 package de.westwing.campaignbrowser.viewmodel
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import de.westwing.campaignbrowser.model.Campaign
+import androidx.lifecycle.viewModelScope
 import de.westwing.campaignbrowser.model.server.CampaignStates
 import de.westwing.campaignbrowser.usecase.GetCampaignListUseCase
-import io.reactivex.rxjava3.core.Scheduler
-import io.reactivex.rxjava3.disposables.CompositeDisposable
+import kotlinx.coroutines.launch
 import javax.inject.Inject
-import javax.inject.Named
 
 class CampaignViewModel @Inject constructor(
-    private val getCampaignListUseCase: GetCampaignListUseCase,
-    @Named("IO_SCHEDULER") private val ioScheduler: Scheduler,
-    @Named("MAIN_SCHEDULER") private val mainScheduler: Scheduler
+    private val getCampaignListUseCase: GetCampaignListUseCase
 ) : ViewModel() {
 
-    private val compositeDisposable = CompositeDisposable()
-
-    val campaignsData = MutableLiveData<CampaignStates>()
+    private val _campaignLiveData = MutableLiveData<CampaignStates>()
+    val campaignsLiveData : LiveData<CampaignStates> = _campaignLiveData
 
     fun getCampaigns() {
-        campaignsData.value = CampaignStates.Loading
+        _campaignLiveData.value = CampaignStates.Loading
 
-        compositeDisposable.add(
-            getCampaignListUseCase.execute()
-            .subscribeOn(ioScheduler)
-            .observeOn(mainScheduler)
-            .subscribe(this::onSuccess, this::onError)
-        )
-    }
-
-    private fun onSuccess(list: List<Campaign>) {
-        campaignsData.postValue(CampaignStates.Success(list))
-    }
-
-    private fun onError(throwable: Throwable) {
-        campaignsData.value = CampaignStates.Error(throwable)
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        compositeDisposable.clear()
+        viewModelScope.launch {
+            try {
+                val result = getCampaignListUseCase.execute()
+                _campaignLiveData.value = CampaignStates.Success(result)
+            }
+            catch (throwable: Throwable) {
+                _campaignLiveData.value = CampaignStates.Error(throwable)
+            }
+        }
     }
 }

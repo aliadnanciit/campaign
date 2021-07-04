@@ -7,11 +7,12 @@ import de.westwing.campaignbrowser.model.server.CampaignsResponse
 import de.westwing.campaignbrowser.model.server.ImageDto
 import de.westwing.campaignbrowser.repository.CampaignRepository
 import io.mockk.MockKAnnotations
+import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
-import io.reactivex.rxjava3.core.Single
-import io.reactivex.rxjava3.schedulers.Schedulers
-
+import kotlinx.coroutines.runBlocking
+import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 
@@ -53,15 +54,18 @@ class GetCampaignListUseCaseTest {
         every { campaignDto.description } returns DESCRIPTION
         every { campaignDto.image } returns imageDto
         every { imageDto.url } returns IMAGE_URL
-        every { campaignRepository.getCampaigns() } returns Single.just(campaignsResponse)
+        coEvery { campaignRepository.getCampaigns() } returns campaignsResponse
 
-        val testSubscriber = getCampaignListUseCase.execute()
-            .subscribeOn(Schedulers.trampoline())
-            .observeOn(Schedulers.trampoline())
-            .test()
+        val result = runBlocking {
+            getCampaignListUseCase.execute()
+        }
 
-        val expectedCampaigns = listOf(Campaign(name = NAME, description = DESCRIPTION, imageUrl = IMAGE_URL))
-        testSubscriber.assertValue(expectedCampaigns)
+        coVerify {
+            campaignRepository.getCampaigns()
+        }
+
+        val expectedCampaignsList = listOf(Campaign(name = NAME, description = DESCRIPTION, imageUrl = IMAGE_URL))
+        Assert.assertEquals(expectedCampaignsList, result)
     }
 
     @Test
@@ -72,14 +76,13 @@ class GetCampaignListUseCaseTest {
         every { campaignDto.description } returns DESCRIPTION
         every { campaignDto.image } returns imageDto
         every { imageDto.url } returns IMAGE_URL
-        every { campaignRepository.getCampaigns() } returns Single.just(campaignsResponse)
+        coEvery { campaignRepository.getCampaigns() } returns campaignsResponse
 
-        val testSubscriber = getCampaignListUseCase.execute()
-            .subscribeOn(Schedulers.trampoline())
-            .observeOn(Schedulers.trampoline())
-            .test()
+        val result = runBlocking {
+            getCampaignListUseCase.execute()
+        }
 
-        testSubscriber.assertValue(emptyList())
+        Assert.assertEquals(0, result.size)
     }
 
     @Test
@@ -90,14 +93,13 @@ class GetCampaignListUseCaseTest {
         every { campaignDto.description } returns DESCRIPTION
         every { campaignDto.image } returns imageDto
         every { imageDto.url } returns IMAGE_URL
-        every { campaignRepository.getCampaigns() } returns Single.just(campaignsResponse)
+        coEvery { campaignRepository.getCampaigns() } returns campaignsResponse
 
-        val testSubscriber = getCampaignListUseCase.execute()
-            .subscribeOn(Schedulers.trampoline())
-            .observeOn(Schedulers.trampoline())
-            .test()
+        val result = runBlocking {
+            getCampaignListUseCase.execute()
+        }
 
-        testSubscriber.assertValue(emptyList())
+        Assert.assertEquals(0, result.size)
     }
 
     @Test
@@ -108,14 +110,13 @@ class GetCampaignListUseCaseTest {
         every { campaignDto.description } returns null
         every { campaignDto.image } returns imageDto
         every { imageDto.url } returns IMAGE_URL
-        every { campaignRepository.getCampaigns() } returns Single.just(campaignsResponse)
+        coEvery { campaignRepository.getCampaigns() } returns campaignsResponse
 
-        val testSubscriber = getCampaignListUseCase.execute()
-            .subscribeOn(Schedulers.trampoline())
-            .observeOn(Schedulers.trampoline())
-            .test()
+        val result = runBlocking {
+            getCampaignListUseCase.execute()
+        }
 
-        testSubscriber.assertValue(emptyList())
+        Assert.assertEquals(0, result.size)
     }
 
     @Test
@@ -126,13 +127,12 @@ class GetCampaignListUseCaseTest {
         every { campaignDto.description } returns EMPTY
         every { campaignDto.image } returns imageDto
         every { imageDto.url } returns IMAGE_URL
-        every { campaignRepository.getCampaigns() } returns Single.just(campaignsResponse)
+        coEvery { campaignRepository.getCampaigns() } returns campaignsResponse
 
-        val testSubscriber = getCampaignListUseCase.execute()
-            .subscribeOn(Schedulers.trampoline())
-            .observeOn(Schedulers.trampoline())
-            .test()
+        val result = runBlocking {
+            getCampaignListUseCase.execute()
+        }
 
-        testSubscriber.assertValue(emptyList())
+        Assert.assertEquals(0, result.size)
     }
 }

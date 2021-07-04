@@ -54,7 +54,7 @@ class CampaignListActivity : AppCompatActivity(), CampaignClickListener {
         )
 
 
-        viewModel.campaignsData.observe(this, {
+        viewModel.campaignsLiveData.observe(this, {
                 campaigns -> processViewState(campaigns)
         })
         loadCampaignsData()
@@ -77,6 +77,8 @@ class CampaignListActivity : AppCompatActivity(), CampaignClickListener {
     }
 
     private fun loadCampaignsData() {
+        binding.loadingIndicator.visibility = View.GONE
+        binding.errorContainer.visibility = View.GONE
         viewModel.getCampaigns()
     }
 

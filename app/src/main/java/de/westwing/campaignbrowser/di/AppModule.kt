@@ -6,18 +6,16 @@ import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
-import de.westwing.campaignbrowser.R
-import de.westwing.campaignbrowser.service.ApiInterface
-import de.westwing.campaignbrowser.repository.CampaignRepositoryImpl
-import de.westwing.campaignbrowser.repository.CampaignRepository
 import de.westwing.campaignbrowser.CampaignApp
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.core.Scheduler
-import io.reactivex.rxjava3.schedulers.Schedulers
+import de.westwing.campaignbrowser.R
+import de.westwing.campaignbrowser.repository.CampaignRepository
+import de.westwing.campaignbrowser.repository.CampaignRepositoryImpl
+import de.westwing.campaignbrowser.service.ApiInterface
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
-import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
 import java.util.concurrent.TimeUnit
 import javax.inject.Named
@@ -71,7 +69,6 @@ abstract class AppModule {
             val retrofit = Retrofit.Builder()
                 .baseUrl(baseUrl)
                 .addConverterFactory(MoshiConverterFactory.create(moshi))
-                .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
                 .client(okHttpClient())
                 .build()
 
@@ -79,11 +76,7 @@ abstract class AppModule {
         }
 
         @Provides
-        @Named("IO_SCHEDULER")
-        fun provideIoScheduler(): Scheduler = Schedulers.io()
-
-        @Provides
-        @Named("MAIN_SCHEDULER")
-        fun provideMainScheduler(): Scheduler = AndroidSchedulers.mainThread()
+        @Named("IO_DISPATCHER")
+        fun provideIoDispatcher(): CoroutineDispatcher = Dispatchers.IO
     }
 }
