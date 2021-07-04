@@ -6,7 +6,9 @@ import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
-import de.westwing.campaignbrowser.CampaignApp
+import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.components.SingletonComponent
 import de.westwing.campaignbrowser.R
 import de.westwing.campaignbrowser.repository.CampaignRepository
 import de.westwing.campaignbrowser.repository.CampaignRepositoryImpl
@@ -22,19 +24,18 @@ import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
+@InstallIn(SingletonComponent::class)
 abstract class AppModule {
-
-    @Binds
-    abstract fun bindContext(app: CampaignApp): Context
 
     @Binds
     abstract fun bindCampaignRepository(campaignRepositoryImpl: CampaignRepositoryImpl): CampaignRepository
 
-    companion object {
 
+
+    companion object {
         @Provides
         @Named("baseUrl")
-        fun baseUrl(context: Context): String {
+        fun baseUrl(@ApplicationContext context: Context): String {
             return context.getString(R.string.base_url)
         }
 
@@ -49,7 +50,6 @@ abstract class AppModule {
                 .writeTimeout(20, TimeUnit.SECONDS)
                 .readTimeout(30, TimeUnit.SECONDS)
                 .addInterceptor(loggingInterceptor)
-                //.retryOnConnectionFailure(true)
             return builder.build()
         }
 

@@ -4,11 +4,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import de.westwing.campaignbrowser.model.server.CampaignStates
 import de.westwing.campaignbrowser.usecase.GetCampaignListUseCase
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@HiltViewModel
 class CampaignViewModel @Inject constructor(
     private val getCampaignListUseCase: GetCampaignListUseCase
 ) : ViewModel() {

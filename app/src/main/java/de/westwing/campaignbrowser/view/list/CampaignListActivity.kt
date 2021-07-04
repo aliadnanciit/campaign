@@ -2,32 +2,28 @@ package de.westwing.campaignbrowser.view.list
 
 import android.os.Bundle
 import android.view.View
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
-import dagger.android.AndroidInjection
+import dagger.hilt.android.AndroidEntryPoint
 import de.westwing.campaignbrowser.R
 import de.westwing.campaignbrowser.common.DensityConverter
 import de.westwing.campaignbrowser.common.ItemHorizontalSpaceDecoration
 import de.westwing.campaignbrowser.common.ItemVerticalSpaceDecoration
 import de.westwing.campaignbrowser.databinding.ActivityCampaignListBinding
-import de.westwing.campaignbrowser.di.ViewModelFactory
 import de.westwing.campaignbrowser.model.Campaign
 import de.westwing.campaignbrowser.model.server.CampaignStates
 import de.westwing.campaignbrowser.view.detail.CampaignDetailActivity
 import de.westwing.campaignbrowser.viewmodel.CampaignViewModel
-import javax.inject.Inject
 
+@AndroidEntryPoint
 class CampaignListActivity : AppCompatActivity(), CampaignClickListener {
 
-    @Inject
-    lateinit var viewModelFactory: ViewModelFactory<CampaignViewModel>
-    private lateinit var viewModel: CampaignViewModel
+    private val viewModel: CampaignViewModel by viewModels()
 
     lateinit var binding: ActivityCampaignListBinding
     private lateinit var adapter : CampaignListAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
         binding = ActivityCampaignListBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -36,7 +32,6 @@ class CampaignListActivity : AppCompatActivity(), CampaignClickListener {
         }
         adapter = CampaignListAdapter(this)
 
-        viewModel = ViewModelProvider(this, viewModelFactory).get(CampaignViewModel::class.java)
         binding.campaignsRecycler.adapter = adapter
         binding.campaignsRecycler.addItemDecoration(
             ItemVerticalSpaceDecoration(
