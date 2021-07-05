@@ -78,5 +78,9 @@ abstract class AppModule {
         @Provides
         @Named("IO_DISPATCHER")
         fun provideIoDispatcher(): CoroutineDispatcher = Dispatchers.IO
+
+        @Provides
+        @Named("DEFAULT_DISPATCHER")
+        fun provideDefaultDispatcher(): CoroutineDispatcher = Dispatchers.Default
     }
 }

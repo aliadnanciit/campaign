@@ -7,6 +7,8 @@ import de.westwing.campaignbrowser.model.server.CampaignStates
 import de.westwing.campaignbrowser.usecase.GetCampaignListUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -16,19 +18,20 @@ class CampaignViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _campaignLiveData = MutableStateFlow<CampaignStates>(CampaignStates.Loading)
-    val campaignsLiveData : StateFlow<CampaignStates> = _campaignLiveData
+    val campaignsLiveData: StateFlow<CampaignStates> = _campaignLiveData
 
     fun getCampaigns() {
         _campaignLiveData.value = CampaignStates.Loading
 
         viewModelScope.launch {
-            try {
-                val result = getCampaignListUseCase.execute()
-                _campaignLiveData.value = CampaignStates.Success(result)
-            }
-            catch (throwable: Throwable) {
-                _campaignLiveData.value = CampaignStates.Error(throwable)
-            }
+
+            getCampaignListUseCase.execute()
+                .catch {
+                    _campaignLiveData.value = CampaignStates.Error(it)
+                }
+                .collect {
+                    _campaignLiveData.value = CampaignStates.Success(it)
+                }
         }
     }
 }
