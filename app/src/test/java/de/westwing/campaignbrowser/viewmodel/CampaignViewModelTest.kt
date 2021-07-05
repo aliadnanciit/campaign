@@ -7,6 +7,7 @@ import de.westwing.campaignbrowser.usecase.GetCampaignListUseCase
 import io.mockk.MockKAnnotations
 import io.mockk.coEvery
 import io.mockk.impl.annotations.MockK
+import kotlinx.coroutines.flow.flowOf
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Rule
@@ -24,7 +25,7 @@ class CampaignViewModelTest {
     @MockK
     private lateinit var getCampaignListUseCase: GetCampaignListUseCase
 
-    /*@Before
+    @Before
     fun setUp() {
         MockKAnnotations.init(this)
         viewModel = CampaignViewModel(
@@ -34,17 +35,18 @@ class CampaignViewModelTest {
 
     @Test
     fun `should show success state`() {
-        coEvery { getCampaignListUseCase.execute() } returns listOf(campaign)
+        coEvery { getCampaignListUseCase.execute() } returns flowOf(listOf(campaign))
 
         viewModel.getCampaigns()
 
         Assert.assertEquals(
             CampaignStates.Success(listOf(campaign)),
-            viewModel.campaignsLiveData.value
+            viewModel.campaignsStateFlow.value
         )
     }
 
-    @Test
+    // NEED to fix this scenario as well
+    /*@Test
     fun `should show error state`() {
         val throwable: Throwable = RuntimeException()
         coEvery { getCampaignListUseCase.execute() } throws throwable
@@ -53,7 +55,7 @@ class CampaignViewModelTest {
 
         Assert.assertEquals(
             CampaignStates.Error(throwable),
-            viewModel.campaignsLiveData.value
+            viewModel.campaignsStateFlow.value
         )
     }*/
 }

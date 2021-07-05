@@ -56,7 +56,7 @@ class CampaignListActivity : AppCompatActivity(), CampaignClickListener {
 
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.campaignsLiveData.collect { campaigns ->
+                viewModel.campaignsStateFlow.collect { campaigns ->
                     processViewState(campaigns)
                 }
             }

@@ -17,20 +17,20 @@ class CampaignViewModel @Inject constructor(
     private val getCampaignListUseCase: GetCampaignListUseCase
 ) : ViewModel() {
 
-    private val _campaignLiveData = MutableStateFlow<CampaignStates>(CampaignStates.Loading)
-    val campaignsLiveData: StateFlow<CampaignStates> = _campaignLiveData
+    private val _campaignStateFlow = MutableStateFlow<CampaignStates>(CampaignStates.Loading)
+    val campaignsStateFlow: StateFlow<CampaignStates> = _campaignStateFlow
 
     fun getCampaigns() {
-        _campaignLiveData.value = CampaignStates.Loading
+        _campaignStateFlow.value = CampaignStates.Loading
 
         viewModelScope.launch {
 
             getCampaignListUseCase.execute()
                 .catch {
-                    _campaignLiveData.value = CampaignStates.Error(it)
+                    _campaignStateFlow.value = CampaignStates.Error(it)
                 }
                 .collect {
-                    _campaignLiveData.value = CampaignStates.Success(it)
+                    _campaignStateFlow.value = CampaignStates.Success(it)
                 }
         }
     }

@@ -1,5 +1,6 @@
 package de.westwing.campaignbrowser.usecase
 
+import app.cash.turbine.test
 import de.westwing.campaignbrowser.model.Campaign
 import de.westwing.campaignbrowser.model.server.CampaignDto
 import de.westwing.campaignbrowser.model.server.CampaignsMetadata
@@ -11,10 +12,14 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
+import junit.framework.Assert.assertEquals
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.runBlocking
-import org.junit.Assert
+import kotlinx.coroutines.test.TestCoroutineDispatcher
+import kotlinx.coroutines.test.runBlockingTest
 import org.junit.Before
 import org.junit.Test
+import kotlin.time.ExperimentalTime
 
 private const val NAME = "name"
 private const val DESCRIPTION = "description"
@@ -40,12 +45,15 @@ class GetCampaignListUseCaseTest {
     @MockK
     private lateinit var campaignsResponse: CampaignsResponse
 
-    /*@Before
+    private val testCoroutineDispatcher = TestCoroutineDispatcher()
+
+    @Before
     fun setUp() {
         MockKAnnotations.init(this)
-        getCampaignListUseCase = GetCampaignListUseCase(campaignRepository)
+        getCampaignListUseCase = GetCampaignListUseCase(campaignRepository, testCoroutineDispatcher)
     }
 
+    @ExperimentalTime
     @Test
     fun `when all name and description are not null then map response`() {
         every { campaignsResponse.metadata } returns metaData
@@ -54,20 +62,24 @@ class GetCampaignListUseCaseTest {
         every { campaignDto.description } returns DESCRIPTION
         every { campaignDto.image } returns imageDto
         every { imageDto.url } returns IMAGE_URL
-        coEvery { campaignRepository.getCampaigns() } returns campaignsResponse
+        coEvery { campaignRepository.getCampaigns() } returns flowOf(campaignsResponse)
 
-        val result = runBlocking {
-            getCampaignListUseCase.execute()
+        runBlockingTest {
+            getCampaignListUseCase.execute().test {
+                assertEquals(
+                    listOf(Campaign(name = NAME, description = DESCRIPTION, imageUrl = IMAGE_URL))
+                    , expectItem()
+                )
+                expectComplete()
+            }
         }
 
         coVerify {
             campaignRepository.getCampaigns()
         }
-
-        val expectedCampaignsList = listOf(Campaign(name = NAME, description = DESCRIPTION, imageUrl = IMAGE_URL))
-        Assert.assertEquals(expectedCampaignsList, result)
     }
 
+    @ExperimentalTime
     @Test
     fun `remove campaign if campaign name is null`() {
         every { campaignsResponse.metadata } returns metaData
@@ -76,15 +88,17 @@ class GetCampaignListUseCaseTest {
         every { campaignDto.description } returns DESCRIPTION
         every { campaignDto.image } returns imageDto
         every { imageDto.url } returns IMAGE_URL
-        coEvery { campaignRepository.getCampaigns() } returns campaignsResponse
+        coEvery { campaignRepository.getCampaigns() } returns flowOf(campaignsResponse)
 
-        val result = runBlocking {
-            getCampaignListUseCase.execute()
+        runBlockingTest {
+            getCampaignListUseCase.execute().test {
+                assertEquals(emptyList<Campaign>(), expectItem())
+                expectComplete()
+            }
         }
-
-        Assert.assertEquals(0, result.size)
     }
 
+    @ExperimentalTime
     @Test
     fun `remove campaign if campaign name is empty`() {
         every { campaignsResponse.metadata } returns metaData
@@ -93,15 +107,17 @@ class GetCampaignListUseCaseTest {
         every { campaignDto.description } returns DESCRIPTION
         every { campaignDto.image } returns imageDto
         every { imageDto.url } returns IMAGE_URL
-        coEvery { campaignRepository.getCampaigns() } returns campaignsResponse
+        coEvery { campaignRepository.getCampaigns() } returns flowOf(campaignsResponse)
 
-        val result = runBlocking {
-            getCampaignListUseCase.execute()
+        runBlockingTest {
+            getCampaignListUseCase.execute().test {
+                assertEquals(emptyList<Campaign>(), expectItem())
+                expectComplete()
+            }
         }
-
-        Assert.assertEquals(0, result.size)
     }
 
+    @ExperimentalTime
     @Test
     fun `remove campaign if description name is null`() {
         every { campaignsResponse.metadata } returns metaData
@@ -110,15 +126,17 @@ class GetCampaignListUseCaseTest {
         every { campaignDto.description } returns null
         every { campaignDto.image } returns imageDto
         every { imageDto.url } returns IMAGE_URL
-        coEvery { campaignRepository.getCampaigns() } returns campaignsResponse
+        coEvery { campaignRepository.getCampaigns() } returns flowOf(campaignsResponse)
 
-        val result = runBlocking {
-            getCampaignListUseCase.execute()
+        runBlockingTest {
+            getCampaignListUseCase.execute().test {
+                assertEquals(emptyList<Campaign>(), expectItem())
+                expectComplete()
+            }
         }
-
-        Assert.assertEquals(0, result.size)
     }
 
+    @ExperimentalTime
     @Test
     fun `remove campaign if campaign description is empty`() {
         every { campaignsResponse.metadata } returns metaData
@@ -127,12 +145,13 @@ class GetCampaignListUseCaseTest {
         every { campaignDto.description } returns EMPTY
         every { campaignDto.image } returns imageDto
         every { imageDto.url } returns IMAGE_URL
-        coEvery { campaignRepository.getCampaigns() } returns campaignsResponse
+        coEvery { campaignRepository.getCampaigns() } returns flowOf(campaignsResponse)
 
-        val result = runBlocking {
-            getCampaignListUseCase.execute()
+        runBlocking {
+            getCampaignListUseCase.execute().test {
+                assertEquals(emptyList<Campaign>(), expectItem())
+                expectComplete()
+            }
         }
-
-        Assert.assertEquals(0, result.size)
-    }*/
+    }
 }
