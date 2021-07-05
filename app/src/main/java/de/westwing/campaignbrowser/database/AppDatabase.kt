@@ -1,0 +1,11 @@
+package de.westwing.campaignbrowser.database
+
+import androidx.room.Database
+import androidx.room.RoomDatabase
+
+@Database(entities = [CampaignEntity::class], version = 1)
+abstract class AppDatabase: RoomDatabase() {
+
+    abstract fun campaignDao() : CampaignDao
+
+}

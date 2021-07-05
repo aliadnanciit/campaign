@@ -1,22 +1,21 @@
 package de.westwing.campaignbrowser.repository
 
 import de.westwing.campaignbrowser.common.safeApiCall
+import de.westwing.campaignbrowser.database.CampaignDao
+import de.westwing.campaignbrowser.database.CampaignEntity
 import de.westwing.campaignbrowser.exception.CampaignNetworkException
 import de.westwing.campaignbrowser.model.Campaign
 import de.westwing.campaignbrowser.model.server.CampaignsResponse
 import de.westwing.campaignbrowser.service.ApiInterface
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 import javax.inject.Named
 
 class CampaignRepositoryImpl @Inject constructor(
     private val apiInterface: ApiInterface,
-    @Named("IO_DISPATCHER") private val ioDispatcher: CoroutineDispatcher,
-    @Named("DEFAULT_DISPATCHER") private val defaultDispatcher: CoroutineDispatcher
+    private val campaignDao: CampaignDao,
+    @Named("IO_DISPATCHER") private val ioDispatcher: CoroutineDispatcher
 ) : CampaignRepository {
 
     override suspend fun getCampaigns(): Flow<List<Campaign>> {
@@ -25,16 +24,44 @@ class CampaignRepositoryImpl @Inject constructor(
                 apiInterface.getCampaigns()
             }
             if (response.isSuccessful) {
-                emit(response.body()!!)
+                val list = filterValidCampaigns(response.body()!!)
+                emit(list)
             } else {
                 throw CampaignNetworkException("Fail to get campaigns due to network error")
             }
         }
-        .flowOn(ioDispatcher)
-        .map {
-            filterValidCampaigns(it)
+        .onStart {
+            val list = campaignDao.getAll().map {
+                Campaign(
+                    id = it.uid,
+                    name = it.name,
+                    description = it.description,
+                    imageUrl = it.imageUrl
+                )
+            }
+            if(list.isEmpty().not()) {
+                emit(list)
+            }
         }
-        .flowOn(defaultDispatcher)
+        .onEach {
+            saveCampaigns(it)
+        }
+        .flowOn(ioDispatcher)
+    }
+
+    private fun saveCampaigns(it: List<Campaign>) {
+        val list = it.map { campaign ->
+            CampaignEntity(
+                uid = campaign.id,
+                name = campaign.name,
+                description = campaign.description,
+                imageUrl = campaign.imageUrl
+            )
+        }
+        if (list.isNotEmpty()) {
+            campaignDao.deleteAll()
+            campaignDao.insertAll(list)
+        }
     }
 
     private fun filterValidCampaigns(it: CampaignsResponse): List<Campaign> {
