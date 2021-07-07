@@ -5,7 +5,7 @@ import androidx.room.PrimaryKey
 
 @Entity
 data class CampaignEntity(
-    @PrimaryKey val uid: Long,
+    @PrimaryKey(autoGenerate = true) val uid: Int,
     val name: String,
     val description: String,
     val imageUrl: String
