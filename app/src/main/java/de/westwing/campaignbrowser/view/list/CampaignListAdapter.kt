@@ -39,6 +39,7 @@ class CampaignListAdapter(
 class CampaignViewHolder(internal val binding: ItemCampaignBinding): RecyclerView.ViewHolder(binding.root) {
 
     fun bind(campaign: Campaign) {
+//        Log.i("CampaignID", "campaign id ${campaign.id}")
         binding.root.tag = campaign
         binding.campaignName.text = campaign.name
         binding.campaignDescription.text = campaign.description

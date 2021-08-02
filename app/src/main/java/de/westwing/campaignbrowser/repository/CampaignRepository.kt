@@ -7,4 +7,6 @@ interface CampaignRepository {
 
     suspend fun getCampaigns(): Flow<List<Campaign>>
 
+    suspend fun fetchCampaigns()
+
 }

@@ -50,10 +50,10 @@ class GetCampaignListUseCaseTest {
     @Before
     fun setUp() {
         MockKAnnotations.init(this)
-        getCampaignListUseCase = GetCampaignListUseCase(campaignRepository, testCoroutineDispatcher)
+//        getCampaignListUseCase = GetCampaignListUseCase(campaignRepository, testCoroutineDispatcher)
     }
 
-    @ExperimentalTime
+    /*@ExperimentalTime
     @Test
     fun `when all name and description are not null then map response`() {
         every { campaignsResponse.metadata } returns metaData
@@ -153,5 +153,5 @@ class GetCampaignListUseCaseTest {
                 expectComplete()
             }
         }
-    }
+    }*/
 }

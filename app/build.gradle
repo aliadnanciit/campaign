@@ -81,6 +81,10 @@ dependencies {
     testImplementation 'app.cash.turbine:turbine:0.5.2' // for cold flows testing
 
     implementation "androidx.room:room-runtime:$room_version"
+    implementation "androidx.room:room-ktx:$room_version"
+    testImplementation "androidx.room:room-runtime:$room_version"
+    testImplementation "androidx.room:room-ktx:$room_version"
     kapt "androidx.room:room-compiler:$room_version"
+
 
 }

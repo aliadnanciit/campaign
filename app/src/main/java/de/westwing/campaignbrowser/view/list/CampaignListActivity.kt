@@ -1,6 +1,7 @@
 package de.westwing.campaignbrowser.view.list
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -15,15 +16,22 @@ import de.westwing.campaignbrowser.common.ItemVerticalSpaceDecoration
 import de.westwing.campaignbrowser.databinding.ActivityCampaignListBinding
 import de.westwing.campaignbrowser.model.Campaign
 import de.westwing.campaignbrowser.model.server.CampaignStates
+import de.westwing.campaignbrowser.test.Yes
 import de.westwing.campaignbrowser.view.detail.CampaignDetailActivity
 import de.westwing.campaignbrowser.viewmodel.CampaignViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class CampaignListActivity : AppCompatActivity(), CampaignClickListener {
 
     private val viewModel: CampaignViewModel by viewModels()
+
+    @Inject
+    lateinit var doYes: Yes
 
     lateinit var binding: ActivityCampaignListBinding
     private lateinit var adapter : CampaignListAdapter
@@ -62,20 +70,29 @@ class CampaignListActivity : AppCompatActivity(), CampaignClickListener {
             }
         }
         loadCampaignsData()
+
+        Log.i("doYes", doYes.hello())
+
     }
 
     private fun processViewState(campaignState: CampaignStates) {
+        binding.loadingIndicator.visibility = View.GONE
+        binding.errorContainer.visibility = View.GONE
+        binding.noContent.visibility = View.GONE
+        binding.campaignsRecycler.visibility = View.GONE
         when(campaignState) {
             is CampaignStates.Loading -> {
                 binding.loadingIndicator.visibility = View.VISIBLE
             }
+            is CampaignStates.NoContent -> {
+                binding.noContent.visibility = View.VISIBLE
+            }
             is CampaignStates.Success -> {
-                binding.loadingIndicator.visibility = View.GONE
-                binding.errorContainer.visibility = View.GONE
+                binding.campaignsRecycler.visibility = View.VISIBLE
                 showDate(campaignState.list)
             }
             is CampaignStates.Error -> {
-                showError()
+                binding.errorContainer.visibility = View.VISIBLE
             }
         }
     }
@@ -83,18 +100,11 @@ class CampaignListActivity : AppCompatActivity(), CampaignClickListener {
     private fun loadCampaignsData() {
         binding.loadingIndicator.visibility = View.GONE
         binding.errorContainer.visibility = View.GONE
-        viewModel.getCampaigns()
+        viewModel.fetchCampaigns()
     }
 
     private fun showDate(list: List<Campaign>) {
-        binding.campaignsRecycler.visibility = View.VISIBLE
         adapter.submitList(list)
-    }
-
-    private fun showError() {
-        binding.campaignsRecycler.visibility = View.GONE
-        binding.loadingIndicator.visibility = View.GONE
-        binding.errorContainer.visibility = View.VISIBLE
     }
 
     override fun onclick(campaign: Campaign) {

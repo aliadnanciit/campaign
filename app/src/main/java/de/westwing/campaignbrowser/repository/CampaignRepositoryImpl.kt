@@ -8,7 +8,10 @@ import de.westwing.campaignbrowser.model.Campaign
 import de.westwing.campaignbrowser.model.server.CampaignsResponse
 import de.westwing.campaignbrowser.service.ApiInterface
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Named
 
@@ -19,34 +22,36 @@ class CampaignRepositoryImpl @Inject constructor(
 ) : CampaignRepository {
 
     override suspend fun getCampaigns(): Flow<List<Campaign>> {
-        return flow {
+        return campaignDao.getAllDistinctUntilChanged()
+            .map {
+                it.map { entity ->
+                    Campaign(
+                        id = entity.uid,
+                        name = entity.name,
+                        description = entity.description,
+                        imageUrl = entity.imageUrl
+                    )
+                }
+            }
+//            .flatMapConcat {
+//                fetchCampaigns() // this call causes infinite loop
+//                flowOf(it)
+//            }
+            .flowOn(ioDispatcher)
+    }
+
+    override suspend fun fetchCampaigns() {
+        withContext(ioDispatcher) {
             val response = safeApiCall {
                 apiInterface.getCampaigns()
             }
             if (response.isSuccessful) {
                 val list = filterValidCampaigns(response.body()!!)
-                emit(list)
+                saveCampaigns(list)
             } else {
                 throw CampaignNetworkException("Fail to get campaigns due to network error")
             }
         }
-        .onStart {
-            val list = campaignDao.getAll().map {
-                Campaign(
-                    id = it.uid,
-                    name = it.name,
-                    description = it.description,
-                    imageUrl = it.imageUrl
-                )
-            }
-            if(list.isEmpty().not()) {
-                emit(list)
-            }
-        }
-        .onEach {
-            saveCampaigns(it)
-        }
-        .flowOn(ioDispatcher)
     }
 
     private fun saveCampaigns(it: List<Campaign>) {

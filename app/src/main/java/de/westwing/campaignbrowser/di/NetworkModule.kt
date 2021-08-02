@@ -39,7 +39,7 @@ abstract class NetworkModule {
             builder.connectTimeout(20, TimeUnit.SECONDS)
                 .writeTimeout(20, TimeUnit.SECONDS)
                 .readTimeout(30, TimeUnit.SECONDS)
-//                .addInterceptor(loggingInterceptor)
+                .addInterceptor(loggingInterceptor)
             return builder.build()
         }
 
